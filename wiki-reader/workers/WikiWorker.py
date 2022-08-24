@@ -7,7 +7,7 @@ class WikiWorker():
 
 	@staticmethod #no class properties are used (no self param)
 	def _extract_company_symbols(page_html):
-		soup = BeautifulSoup(page_html, 'lxml')
+		soup = BeautifulSoup(page_html, features='html.parser')
 		table = soup.find(id='constituents')
 		table_rows = table.find_all('tr')
 
