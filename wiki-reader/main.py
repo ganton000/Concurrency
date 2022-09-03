@@ -1,7 +1,8 @@
 from time import time
+from multiprocessing import Queue
 
 from workers.WikiWorker import WikiWorker
-from workers.YahooFinanceWorkers import YahooFinanceWorker
+from workers.YahooFinanceWorkers import YahooFinancePriceScheduler, YahooFinanceWorker
 
 def get_sp_stock_symbols():
 	url_to_fetch = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
@@ -33,11 +34,41 @@ def get_stock_price_threading(YahooFinanceWorker, symbol_list):
 
 	print('Extraction time took:', round(time() - scraper_start_time, 1))
 
+def main():
+	url_to_fetch = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
+	symbol_queue = Queue()
+	scraper_start_time = time()
+
+
+	wikiWorker = WikiWorker(url=url_to_fetch)
+
+	yahoo_finance_price_scheduler_threads = []
+	num_yahoo_finance_price_workers = 4
+	for i in range(num_yahoo_finance_price_workers):
+		yahooFinancePriceScheduler = YahooFinancePriceScheduler(input_queue=symbol_queue)
+		yahoo_finance_price_scheduler_threads.append(yahooFinancePriceScheduler)
+
+	for symbol in wikiWorker.get_sp_500_companies():
+		print('Inserting first symbol into queue')
+		symbol_queue.put(symbol)
+
+	for _ in range(len(yahoo_finance_price_scheduler_threads)):
+		symbol_queue.put('DONE') #DONE for each thread
+
+	for i in range(len(yahoo_finance_price_scheduler_threads)):
+		yahoo_finance_price_scheduler_threads[i].join()
+
+	print('Extraction time took:', round(time() - scraper_start_time, 1))
+
+
 if __name__ == '__main__':
-	list_of_symbols = get_sp_stock_symbols()
+
+	#list_of_symbols = get_sp_stock_symbols()
 	#get_price_of_stock("AAPL")
 
-	get_stock_price_threading(
-		YahooFinanceWorker=YahooFinanceWorker,
-		symbol_list=list_of_symbols
-		)
+	#get_stock_price_threading(
+	#	YahooFinanceWorker=YahooFinanceWorker,
+	#	symbol_list=list_of_symbols
+	#	)
+
+	main()

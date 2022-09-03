@@ -5,15 +5,35 @@ import requests
 import time
 import random
 
-class YahooFinanceWorker(threading.Thread):
+
+class YahooFinancePriceScheduler(threading.Thread):
+	def __init__(self, input_queue, **kwargs):
+		super(YahooFinancePriceScheduler, self).__init__(**kwargs)
+		self._input_queue = input_queue
+		self.start()
+
+	def run(self):
+		while True:
+			#blocking operation until value is returned
+			val = self._input_queue.get()
+			if val == 'DONE':
+				break
+
+			yahooFinanceWorker = YahooFinanceWorker(symbol=val)
+			price = yahooFinanceWorker.get_stock_price()
+			print(price)
+			time.sleep(random.random()) #0-1 second sleep
+
+
+class YahooFinanceWorker():
 
 	def __init__(self, symbol, **kwargs):
 		super(YahooFinanceWorker, self).__init__(**kwargs)
 		self._symbol = symbol
 		self._url = f"https://finance.yahoo.com/quote/{self._symbol}"
-		self.start()
 
-	def _extract_current_stock_price(self):
+	def get_stock_price(self):
+
 		r = requests.get(self._url)
 
 		if r.status_code != 200:
@@ -23,8 +43,5 @@ class YahooFinanceWorker(threading.Thread):
 		dom = etree.HTML(str(page_contents))
 		price = dom.xpath('//*[@id="quote-header-info"]/div[3]/div[1]/div/fin-streamer[1]')[0].text
 
-		assert type(float(price)) == float, f"price: {price} is not a float"
-
-	def run(self):
-		time.sleep(30*random.random()) #sleep between 0 -> 20 seconds
-		self._extract_current_stock_price()
+		price = float(price.replace(",",""))
+		return price
