@@ -1,9 +1,11 @@
 import threading
-from bs4 import BeautifulSoup
-from lxml import etree #to use xpath
-import requests
 import time
 import random
+from queue import Empty
+
+import requests
+from bs4 import BeautifulSoup
+from lxml import etree #to use xpath
 
 
 class YahooFinancePriceScheduler(threading.Thread):
@@ -16,7 +18,14 @@ class YahooFinancePriceScheduler(threading.Thread):
 	def run(self):
 		while True:
 			#blocking operation until value is returned
-			val = self._input_queue.get()
+
+			try:
+				val = self._input_queue.get(timeout=10)
+			except Empty:
+				print("Yahoo Scheduler queue is empty, stopping")
+				break
+
+
 			if val == 'DONE':
 				if self._output_queue is not None:
 					self._output_queue.put("DONE")
