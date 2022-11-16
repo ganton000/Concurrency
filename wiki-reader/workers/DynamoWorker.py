@@ -1,6 +1,6 @@
 import threading
 
-from ..utils import db
+from .utils import db
 
 def call_clsinit(*args, **kwargs):
     cls = type(*args, **kwargs)

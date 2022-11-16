@@ -7,10 +7,10 @@ import random
 
 
 class YahooFinancePriceScheduler(threading.Thread):
-	def __init__(self, input_queue, **kwargs):
+	def __init__(self, input_queue, output_queue, **kwargs):
 		super(YahooFinancePriceScheduler, self).__init__(**kwargs)
 		self._input_queue = input_queue
-		self._output_queue = kwargs.get("output_queue")
+		self._output_queue = output_queue
 		self.start()
 
 	def run(self):
