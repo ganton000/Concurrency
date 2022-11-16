@@ -10,6 +10,7 @@ class YahooFinancePriceScheduler(threading.Thread):
 	def __init__(self, input_queue, **kwargs):
 		super(YahooFinancePriceScheduler, self).__init__(**kwargs)
 		self._input_queue = input_queue
+		self._output_queue = kwargs.get("output_queue")
 		self.start()
 
 	def run(self):
@@ -17,11 +18,17 @@ class YahooFinancePriceScheduler(threading.Thread):
 			#blocking operation until value is returned
 			val = self._input_queue.get()
 			if val == 'DONE':
+				if self._output_queue is not None:
+					self._output_queue.put("DONE")
 				break
 
 			yahooFinanceWorker = YahooFinanceWorker(symbol=val)
 			price = yahooFinanceWorker.get_stock_price()
-			print(price)
+			if self._output_queue is not None:
+				output_values = (val, price, str(time.time()))
+				self._output_queue.put(output_values)
+
+			#print(price)
 			time.sleep(random.random()) #0-1 second sleep
 
 
