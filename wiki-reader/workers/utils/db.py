@@ -9,10 +9,6 @@ def create_table(table_name):
 		dynamo.create_table(
 			AttributeDefinitions=[
 				{
-				"AttributeName": "id",
-				"AttributeType": "N"
-				},
-				{
 				"AttributeName": "symbol",
 				"AttributeType": "S"
 				},
@@ -22,10 +18,6 @@ def create_table(table_name):
 				{
 				"AttributeName": "symbol",
 				"KeyType": "HASH"
-				},
-				{
-				"AttributeName": "id",
-				"KeyType": "RANGE"
 				}
 			],
 			ProvisionedThroughput={
@@ -56,19 +48,16 @@ def main():
 
 	items = [
 		{
-			"id": { "N": "1" },
 			"symbol": { "S": "a" },
 			"price": { "N": "3" },
 			"extracted_time": { "S": "3"}
 		},
 		{
-			"id": { "N": "2" },
 			"symbol": { "S": "b" },
 			"price": { "N": "4" },
 			"extracted_time": { "S": "4"}
 		},
 		{
-			"id": { "N": "3" },
 			"symbol": { "S": "a" },
 			"price": { "N": "5" },
 			"extracted_time": { "S": "5"}
@@ -88,4 +77,4 @@ def main():
 			add_item(table_name, item)
 
 if __name__ == "__main__":
-	main()
+	create_table("threading-example")

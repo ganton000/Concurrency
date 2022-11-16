@@ -56,7 +56,7 @@ def main():
 	dynamo_scheduler_threads = []
 	num_dynamo_workers = 4
 	for i in range(num_dynamo_workers):
-		dynamoScheduler = DynamoMasterScheduler(input_queue=symbol_queue)
+		dynamoScheduler = DynamoMasterScheduler(input_queue=dynamo_queue)
 		dynamo_scheduler_threads.append(dynamoScheduler)
 
 	for symbol in wikiWorker.get_sp_500_companies():

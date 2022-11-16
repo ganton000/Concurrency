@@ -24,19 +24,18 @@ class DynamoMasterScheduler(threading.Thread):
 			symbol, price, extracted_time = val
 
 			#create worker and insert into db
-			dynamo_worker = DynamoWorker(symbol, price, extracted_time)
+			dynamo_worker = DynamoWorker(symbol, price, extracted_time, "threading-example")
 			dynamo_worker.insert_into_db()
 
 class DynamoWorker():
-	__metaclass__ = call_clsinit
 
-	def __init__(self,  symbol, price, extracted_time, table_name="demo-worker-table"):
+	def __init__(self,  symbol, price, extracted_time, table_name="threading-example"):
 		self._table_name = table_name
 		self._symbol = symbol
 		self._price = price
 		self._extracted_time = extracted_time
 
-	def _clsinit(self):
+	def create_dyamo_table(self):
 		db.create_table(
 			self._table_name
 		)
@@ -48,7 +47,7 @@ class DynamoWorker():
 				"S": self._symbol
 			},
 			"price": {
-				"N": self._price
+				"S": self._price
 			},
 			"extracted_time": {
 				"S": self._extracted_time

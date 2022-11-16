@@ -25,7 +25,7 @@ class YahooFinancePriceScheduler(threading.Thread):
 			yahooFinanceWorker = YahooFinanceWorker(symbol=val)
 			price = yahooFinanceWorker.get_stock_price()
 			if self._output_queue is not None:
-				output_values = (val, price, str(time.time()))
+				output_values = (val, str(price), str(time.time()))
 				self._output_queue.put(output_values)
 
 			#print(price)
