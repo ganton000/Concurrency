@@ -1,4 +1,5 @@
 import threading
+from queue import Empty
 
 from .utils import db
 
@@ -17,7 +18,12 @@ class DynamoMasterScheduler(threading.Thread):
 
 	def run(self):
 		while True:
-			val = self._input_queue.get()
+			try:
+				val = self._input_queue.get(timeout=10)
+			except Empty:
+				print("Timeout reached in Dynamo Scheduler, stopping")
+				break
+
 			if val == "DONE":
 				break
 
