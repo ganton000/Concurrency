@@ -50,7 +50,7 @@ def main():
 	yahoo_finance_price_scheduler_threads = []
 	num_yahoo_finance_price_workers = 4
 	for i in range(num_yahoo_finance_price_workers):
-		yahooFinancePriceScheduler = YahooFinancePriceScheduler(input_queue=symbol_queue, output_queue=dynamo_queue)
+		yahooFinancePriceScheduler = YahooFinancePriceScheduler(input_queue=symbol_queue, output_queue=[dynamo_queue])
 		yahoo_finance_price_scheduler_threads.append(yahooFinancePriceScheduler)
 
 	dynamo_scheduler_threads = []
@@ -68,6 +68,9 @@ def main():
 
 	for i in range(len(yahoo_finance_price_scheduler_threads)):
 		yahoo_finance_price_scheduler_threads[i].join()
+
+	for i in range(len(dynamo_scheduler_threads)):
+		dynamo_scheduler_threads[i].join()
 
 	print('Extraction time took:', round(time() - scraper_start_time, 1))
 
