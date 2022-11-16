@@ -26,7 +26,6 @@ def create_table(table_name):
     		}
 		)
 	except dynamo.exceptions.ResourceInUseException as err:
-		print(err.response)
 		print(f'{err.response["Error"]["Code"]}:: {err.response["Error"]["Message"]}')
 	except Exception as err:
 		print(err)
@@ -77,4 +76,4 @@ def main():
 			add_item(table_name, item)
 
 if __name__ == "__main__":
-	create_table("threading-example")
+	main()

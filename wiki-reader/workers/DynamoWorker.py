@@ -35,11 +35,12 @@ class DynamoWorker():
 		self._price = price
 		self._extracted_time = extracted_time
 
-	def create_dyamo_table(self):
+		self._create_dynamo_table()
+
+	def _create_dynamo_table(self):
 		db.create_table(
 			self._table_name
 		)
-		print(f"Successfully created {self._table_name}")
 
 	def insert_into_db(self):
 		Item = {
