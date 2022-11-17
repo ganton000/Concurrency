@@ -35,17 +35,21 @@ class YamlPipelineExecutor():
 								if output_queues is not None else None
 			}
 
+			input_values = worker.get("input_values")
+			if input_values is not None:
+				init_params["input_values"] = input_values
+
 			self._workers[worker_name] = []
-			for i in range(num_instances):
+			for _ in range(num_instances):
 				self._workers[worker_name].append(WorkerClass(**init_params))
 
-	def _join_workers(self):
+	def join_workers(self):
 		for worker_name in self._workers:
 			for worker_thread in self._workers[worker_name]:
 				worker_thread.join()
 
-	def process_pipeline(self, filename):
+	def process_pipeline(self):
 		self._load_pipeline()
 		self._initialize_queues()
 		self._initialize_workers()
-		self._join_workers()
+		#self._join_workers()

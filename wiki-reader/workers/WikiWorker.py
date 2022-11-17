@@ -1,5 +1,18 @@
+import threading
+
 import requests
 from bs4 import BeautifulSoup
+
+class WikiWorkerMasterScheduler(threading.Thread):
+
+	def __init__(self, **kwargs):
+		super(WikiWorkerMasterScheduler, self).__init__(**kwargs)
+		self.start()
+
+	def run(self):
+		while True:
+			pass
+
 
 class WikiWorker():
 	def __init__(self, url, **kwargs):
