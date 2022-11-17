@@ -6,12 +6,19 @@ queues:
     description: contains data that is uploaded to dynamo db
 
 workers:
+  #- name: URLSeeder
+  #  input_values:
+  #    - 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
+  #  output_queues:
+  #    - URLOutputs
+
   - name: WikiWorker
     description: scrapes raw wikipedia page and pulls out symbols
     note: Only have on instance here, otherwise we scrap the same symbol multiple times
     location: workers.WikiWorker
     class: WikiWorkerMasterScheduler
     instance: 1
+    #input_queue: URLOutputs
     input_values:
       - 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
     output_queues:
