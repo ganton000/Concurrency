@@ -97,6 +97,7 @@ class YamlPipelineExecutor(threading.Thread):
 				break
 
 			for worker_name in to_del:
-				del self._workers[worker_name]
+				if worker_name in self._workers:
+					del self._workers[worker_name]
 
 			time.sleep(5)
