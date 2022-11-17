@@ -49,20 +49,7 @@ def main():
 	yamlPipelineExecutor.process_pipeline()
 
 
-
-	wikiWorker = WikiWorker(url=url_to_fetch)
-
-	symbol_counter = 0
-	for symbol in wikiWorker.get_sp_500_companies():
-		yamlPipelineExecutor._queues["SymbolQueue"].put(symbol)
-		symbol_counter += 1
-		if symbol_counter >= 5:
-			break
-
-	for _ in range(20):
-		yamlPipelineExecutor._queues["SymbolQueue"].put("DONE")
-
-	yamlPipelineExecutor.join_workers()
+	#yamlPipelineExecutor.join_workers()
 
 	print('Extraction time took:', round(time() - scraper_start_time, 1))
 

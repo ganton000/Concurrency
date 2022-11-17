@@ -46,7 +46,7 @@ class YamlPipelineExecutor(threading.Thread):
 			for _ in range(num_instances):
 				self._workers[worker_name].append(WorkerClass(**init_params))
 
-	def join_workers(self):
+	def _join_workers(self):
 		for worker_name in self._workers:
 			for worker_thread in self._workers[worker_name]:
 				worker_thread.join()
@@ -55,4 +55,4 @@ class YamlPipelineExecutor(threading.Thread):
 		self._load_pipeline()
 		self._initialize_queues()
 		self._initialize_workers()
-		#self._join_workers()
+		self._join_workers()

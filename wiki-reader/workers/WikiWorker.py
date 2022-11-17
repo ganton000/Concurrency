@@ -5,13 +5,35 @@ from bs4 import BeautifulSoup
 
 class WikiWorkerMasterScheduler(threading.Thread):
 
-	def __init__(self, **kwargs):
+	def __init__(self, output_queues, **kwargs):
+		if "input_queue" in kwargs:
+			kwargs.pop("input_queue")
+		self._input_values = kwargs.pop("input_values")
+
 		super(WikiWorkerMasterScheduler, self).__init__(**kwargs)
+
+		temp_queue = output_queues
+		if type(temp_queue) != list:
+			temp_queue = [temp_queue]
+		self._output_queues = temp_queue
+
 		self.start()
 
 	def run(self):
-		while True:
-			pass
+		for value in self._input_values:
+			wikiWorker = WikiWorker(url=value)
+
+			symbol_counter = 0
+			for symbol in wikiWorker.get_sp_500_companies():
+				for output_queue in self._output_queues:
+					output_queue.put(symbol)
+				symbol_counter += 1
+				if symbol_counter >= 5:
+					break
+
+		for output_queue in self._output_queues:
+			for _ in range(20):
+				output_queue.put("DONE")
 
 
 class WikiWorker():
