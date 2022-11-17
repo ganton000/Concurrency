@@ -30,8 +30,6 @@ class YahooFinancePriceScheduler(threading.Thread):
 
 
 			if val == 'DONE':
-				for output_queue in self._output_queues:
-					output_queue.put("DONE")
 				break
 
 			yahooFinanceWorker = YahooFinanceWorker(symbol=val)
@@ -42,6 +40,9 @@ class YahooFinancePriceScheduler(threading.Thread):
 
 			time.sleep(random.random()) #0-1 second sleep
 
+			for output_queue in self._output_queues:
+				for _ in range(20):
+					output_queue.put("DONE")
 
 class YahooFinanceWorker():
 
