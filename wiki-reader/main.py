@@ -62,7 +62,7 @@ def main():
 	for _ in range(20):
 		yamlPipelineExecutor._queues["SymbolQueue"].put("DONE")
 
-	yamlPipelineExecutor._join_workers()
+	yamlPipelineExecutor.join_workers()
 
 	print('Extraction time took:', round(time() - scraper_start_time, 1))
 

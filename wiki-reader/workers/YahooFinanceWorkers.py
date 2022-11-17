@@ -9,10 +9,10 @@ from lxml import etree #to use xpath
 
 
 class YahooFinancePriceScheduler(threading.Thread):
-	def __init__(self, input_queue, output_queue, **kwargs):
+	def __init__(self, input_queue, output_queues, **kwargs):
 		super(YahooFinancePriceScheduler, self).__init__(**kwargs)
 		self._input_queue = input_queue
-		temp_queue = output_queue
+		temp_queue = output_queues
 		if type(temp_queue) != list:
 			temp_queue = [temp_queue]
 		self._output_queues = temp_queue

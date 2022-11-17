@@ -20,8 +20,7 @@ workers:
     location: workers.YahooFinanceWorkers
     class: YahooFinancePriceScheduler
     instances: 3
-    input_queue:
-      - SymbolQueue
+    input_queue: SymbolQueue
     output_queues:
       - DynamoQueue
 
@@ -30,5 +29,4 @@ workers:
     location: workers.DynamoWorker
     class: DynamoMasterScheduler
     instances: 4
-    input_queue:
-      - DynamoQueue
+    input_queue: DynamoQueue
