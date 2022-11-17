@@ -1,9 +1,10 @@
 import importlib
 import threading
+import time
 
 from multiprocessing import Queue
-
 import yaml
+
 
 class YamlPipelineExecutor(threading.Thread):
 
@@ -12,6 +13,8 @@ class YamlPipelineExecutor(threading.Thread):
 		self._pipeline_location = pipeline_location
 		self._queues = {}
 		self._workers = {}
+		self._queue_consumers = {}
+		self._downstream_queues = {}
 
 
 	def _load_pipeline(self):
@@ -31,6 +34,12 @@ class YamlPipelineExecutor(threading.Thread):
 			worker_name = worker["name"]
 			num_instances = worker.get("instances", 1)
 
+			#output queues assigned to a worker
+			self._downstream_queues[worker_name] = output_queues
+
+			#num of workers consuming an input queue
+			if input_queue is not None:
+				self._queue_consumers[input_queue] = num_instances
 
 			init_params = {
 				"input_queue": self._queues[input_queue] if input_queue is not None else None,
@@ -55,4 +64,39 @@ class YamlPipelineExecutor(threading.Thread):
 		self._load_pipeline()
 		self._initialize_queues()
 		self._initialize_workers()
-		self._join_workers()
+		#self._join_workers()
+
+	def run(self):
+		self.process_pipeline()
+
+		total_workers_alive = 0
+		worker_stats = []
+		to_del = []
+		while True:
+			total_workers_alive = 0
+			for worker_name in self._workers:
+				total_worker_threads_alive = 0
+				for worker_thread in self._workers[worker_name]:
+					if worker_thread.is_alive():
+						total_worker_threads_alive += 1
+
+				total_workers_alive += total_worker_threads_alive
+				if total_worker_threads_alive == 0:
+					if self._downstream_queues[worker_name] is not None:
+						for output_queue in self._downstream_queues[worker_name]:
+							number_of_consumers = self._queue_consumers[output_queue]
+							for _ in range(number_of_consumers):
+								self._queues[output_queue].put("DONE")
+
+					to_del.append(worker_name)
+
+				worker_stats.append([worker_name, total_workers_alive])
+
+			print(worker_stats)
+			if total_workers_alive == 0:
+				break
+
+			for worker_name in to_del:
+				del self._workers[worker_name]
+
+			time.sleep(5)

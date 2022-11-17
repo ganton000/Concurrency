@@ -10,7 +10,8 @@ def main():
 	scraper_start_time = time()
 
 	yamlPipelineExecutor = YamlPipelineExecutor(pipeline_path)
-	yamlPipelineExecutor.process_pipeline()
+	yamlPipelineExecutor.start()
+	#yamlPipelineExecutor.process_pipeline()
 
 	print('Extraction time took:', round(time() - scraper_start_time, 1))
 
