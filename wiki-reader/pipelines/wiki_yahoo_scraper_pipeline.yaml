@@ -6,19 +6,20 @@ queues:
     description: contains data that is uploaded to dynamo db
 
 workers:
-  - name: WikiWorker
-    description: scrapes raw wikipedia page and pulls out symbols
-    location: workers.WikiWorker
-    class: WikiWorker
-    input_values:
-      - 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
-    output_queues:
-      - SymbolQueue
+  #- name: WikiWorker
+  #  description: scrapes raw wikipedia page and pulls out symbols
+  #  location: workers.WikiWorker
+  #  class: WikiWorker
+  #  input_values:
+  #    - 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
+  #  output_queues:
+  #    - SymbolQueue
 
   - name: YahooFinanceWorker
     description: pulls price data for a specific stock symbol from yahoo finance
     location: workers.YahooFinanceWorkers
     class: YahooFinancePriceScheduler
+    instances: 3
     input_queue:
       - SymbolQueue
     output_queues:
@@ -28,5 +29,6 @@ workers:
     description: adds data for a specific stock symbol to dynamo db table
     location: workers.DynamoWorker
     class: DynamoMasterScheduler
+    instances: 4
     input_queue:
       - DynamoQueue

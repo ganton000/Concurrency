@@ -15,7 +15,7 @@ class YahooFinancePriceScheduler(threading.Thread):
 		temp_queue = output_queue
 		if type(temp_queue) != list:
 			temp_queue = [temp_queue]
-		self._output_queue = temp_queue
+		self._output_queues = temp_queue
 		self.start()
 
 	def run(self):
@@ -30,13 +30,13 @@ class YahooFinancePriceScheduler(threading.Thread):
 
 
 			if val == 'DONE':
-				for output_queue in self._output_queue:
+				for output_queue in self._output_queues:
 					output_queue.put("DONE")
 				break
 
 			yahooFinanceWorker = YahooFinanceWorker(symbol=val)
 			price = yahooFinanceWorker.get_stock_price()
-			for output_queue in self._output_queue:
+			for output_queue in self._output_queues:
 				output_values = (val, str(price), str(time.time()))
 				output_queue.put(output_values)
 
