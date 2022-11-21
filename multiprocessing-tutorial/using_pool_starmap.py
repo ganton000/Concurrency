@@ -14,7 +14,7 @@ def run():
 
 	prepared_list = []
 	for i in range(len(lower_and_upper_bounds)):
-		prepared_list.append((comparison_list, lower_and_upper_bounds[i][0], lower_and_upper_bounds[i][1]))
+		prepared_list.append((comparison_list, *lower_and_upper_bounds[i]))
 
 	print("starmapped list", prepared_list)
 
