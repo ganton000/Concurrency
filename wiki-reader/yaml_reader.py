@@ -92,12 +92,13 @@ class YamlPipelineExecutor(threading.Thread):
 
 				worker_stats.append([worker_name, total_workers_alive])
 
-			print(worker_stats)
 			if total_workers_alive == 0:
 				break
 
 			for worker_name in to_del:
 				if worker_name in self._workers:
+					print(worker_name, total_workers_alive)
 					del self._workers[worker_name]
 
+			print(worker_stats)
 			time.sleep(5)
